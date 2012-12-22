@@ -1,74 +1,74 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <link href="style.css" rel="stylesheet" type="text/css" />
-    <title>6502 assembler/simulator</title>
-  </head>
-  <body>
-
+    <title>6502 assembler/disassenbler/simulator</title>
+</head>
+<body>
     <div class="widget">
-      <div class="buttons">
-        <input type="button" value="Assemble" class="assembleButton" />
-        <input type="button" value="Run" class="runButton" />
-        <input type="button" value="Reset" class="resetButton" />
-        <input type="button" value="Hexdump" class="hexdumpButton" />
-        <input type="button" value="Disassemble" class="disassembleButton" />
-        <input type="button" value="Notes" class="notesButton" />
-      </div>
-
-      <textarea class="code"></textarea>
-
-      <canvas class="screen" width="160" height="160"></canvas>
-
-      <div class="modeSwitches">
-        <form action="">
-          Data width:
-          <div>
-            <input type="radio" name="dataWidth" value=8 checked> 8
-            <input type="radio" name="dataWidth" value=16> 16
-            <input type="radio" name="dataWidth" value=32> 32
-          </div>
-        </form>
-      </div>
-
-      <div class="debugger">
-        <input type="checkbox" class="debug" name="debug" />
-        <label for="debug">Debugger</label>
-        <div class="minidebugger"></div>
         <div class="buttons">
-          <input type="button" value="Step" class="stepButton" />
-          <input type="button" value="Jump to ..." class="gotoButton" />
-          <input type="button" value="Turbo (off)" class="turboButton" />
+            <input type="button" value="Assemble" class="assembleButton" />
+            <input type="button" value="Run" class="runButton" />
+            <input type="button" value="Reset" class="resetButton" />
+            <input type="button" value="Hexdump" class="hexdumpButton" />
+            <input type="button" value="Disassemble" class="disassembleButton" />
+            <input type="button" value="Notes" class="notesButton" />
         </div>
-      </div>
 
-      <div class="monitorControls">
-        <label for="monitoring">Monitor</label>
-        <input type="checkbox" class="monitoring" name="monitoring" />
+        <textarea class="code"></textarea>
 
-        <label for="start">Start: $</label>
-        <input type="text" value="0" class="start" name="start" />
-        <label for="length">Length: $</label>
-        <input type="text" value="ff" class="length" name="length" />
-      </div>
-      <div class="monitor"><pre><code></code></pre></div>
-      <div class="messages"><pre><code></code></pre></div>
+        <canvas class="screen" width="160" height="80"></canvas>
 
-      <div class="notes" style="display: none">Notes:
+        <div class="modeSwitches">
+            <form action="">
+                Data width:
+                <div>
+                    <input type="radio" name="dataWidth" value=8 checked> 8
+                    <input type="radio" name="dataWidth" value=16> 16
+                    <input type="radio" name="dataWidth" value=32> 32
+                </div>
+            </form>
+        </div>
+
+        <div class="debugger">
+            <input type="checkbox" class="debug" name="debug" />
+            <label for="debug">Debugger</label>
+            <div class="minidebugger"></div>
+            <div class="buttons">
+                <input type="button" value="Step" class="stepButton" />
+                <input type="button" value="Jump to ..." class="gotoButton" />
+                <input type="button" value="Turbo (off)" class="turboButton" />
+            </div>
+        </div>
+
+        <div class="monitorControls">
+            <label for="monitoring">Monitor</label>
+            <input type="checkbox" class="monitoring" name="monitoring" />
+
+            <label for="start">Start: $</label>
+            <input type="text" value="0" class="start" name="start" />
+            <label for="length">Length: $</label>
+            <input type="text" value="ff" class="length" name="length" />
+        </div>
+        
+        <div class="monitor"><pre><code></code></pre></div>
+        <div class="messages"><pre><code></code></pre></div>
+
+        <div class="notes" style="display: none">Notes:
 
 For basic operation and 6502 tutorial please see http://skilldrick.github.com/easy6502/
 
-This fork models 16bit and 32bit variations on the 6502: see 65Org16 discussions at http://forum.6502.org/viewtopic.php?t=1982
+This fork models 16-bit and 32-bit variations on the 6502: see 65Org16 discussions at http://forum.6502.org/viewtopic.php?t=1982
 
 The source for this fork is found at https://github.com/BigEd/6502js
 
 Note that the simulated machine has a memory mapped display, input, and random byte generator.
 
 This fork also implements the WDM opcode: an operand of 0 sends a byte to output.
-    </div>
+        </div>
 
-    <script src="es5-shim.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="assembler.js"></script>
-  </body>
+        <script src="es5-shim.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script src="assembler.js"></script>
+</body>
 </html>
