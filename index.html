@@ -2,7 +2,7 @@
 <html>
 <head>
     <link href="style.css" rel="stylesheet" type="text/css" />
-    <title>6502 assembler/disassenbler/simulator</title>
+    <title>6502 assembler/disassembler/simulator</title>
 </head>
 <body>
     <div class="widget">
@@ -48,7 +48,7 @@
             <label for="start">Start: $</label>
             <input type="text" value="0" class="start" name="start" />
             <label for="length">Length: $</label>
-            <input type="text" value="ff" class="length" name="length" />
+            <input type="text" value="100" class="length" name="length" />
         </div>
         
         <div class="monitor"><pre><code></code></pre></div>
@@ -56,15 +56,16 @@
 
         <div class="notes" style="display: none">Notes:
 
-For basic operation and 6502 tutorial please see http://skilldrick.github.com/easy6502/
+            For basic operation and 6502 tutorial please see:
+                http://skilldrick.github.com/easy6502/
+            This fork models 16-bit and 32-bit variations on the 6502:
+            see 65Org16 discussions at: http://forum.6502.org/viewtopic.php?t=1982
+            
+            The source for this fork is found at https://github.com/BigEd/6502js
 
-This fork models 16-bit and 32-bit variations on the 6502: see 65Org16 discussions at http://forum.6502.org/viewtopic.php?t=1982
+            Note that the simulated machine has a memory mapped display, input, and random byte generator.
 
-The source for this fork is found at https://github.com/BigEd/6502js
-
-Note that the simulated machine has a memory mapped display, input, and random byte generator.
-
-This fork also implements the WDM opcode: an operand of 0 sends a byte to output.
+            This fork also implements the WDM opcode: an operand of 0 sends a byte to output.
         </div>
 
         <script src="es5-shim.js"></script>
