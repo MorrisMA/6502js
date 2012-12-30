@@ -200,7 +200,7 @@ function SimulatorWidget(node) {
     }
 
     function reset() {
-      ctx.fillStyle = "black";
+      ctx.fillStyle = "red";
       ctx.fillRect(0, 0, width, height);
     }
 
@@ -1950,7 +1950,7 @@ function SimulatorWidget(node) {
       codeLen = 0;
       for (var i = 0; i < lines.length; i++) {
         if (!assembleLine(lines[i], i)) {
-          codeAssembleddOK = false;
+          codeAssembledOK = false;
           message("line "+i+" does not assemble: "+lines[i]);
           break;
         }
