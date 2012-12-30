@@ -1992,7 +1992,7 @@ function SimulatorWidget(node) {
       codeLen = 0;
       for (var i = 0; i < lines.length; i++) {
         if (!assembleLine(lines[i], i)) {
-          codeAssembledOK  = false;
+          codeAssembledOK = false;
           message("line " + i + " does not assemble: " + lines[i]);
           break;
         }
