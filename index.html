@@ -2,7 +2,7 @@
 <html>
   <head>
     <link href="style.css" rel="stylesheet" type="text/css" />
-    <title>6502 assembler/simulator</title>
+    <title>M65C02 assembler/disassembler/simulator</title>
   </head>
   <body>
 
@@ -18,7 +18,7 @@
 
       <textarea class="code"></textarea>
 
-      <canvas class="screen" width="160" height="160"></canvas>
+      <canvas class="screen" width="160" height="80"></canvas>
 
       <div class="modeSwitches">
         <form action="">
@@ -58,15 +58,20 @@
 
 For basic operation and 6502 tutorial please see http://skilldrick.github.com/easy6502/
 
-This fork models 16bit and 32bit variations on the 6502: see 65Org16 discussions at http://forum.6502.org/viewtopic.php?t=1982
+This fork extends the 6502 instruction set to that of the 65C02. Presently there are four
+missing instructions because the simulator component has not been extended to include three
+missing addressing modes: jmp (abs); jmp (abs,x); bbrx zp,rel; and bbsx zp,rel. The assembler,
+but not the simulator or disassembler, currently supports all of the 65C02 instructions except
+the four noted above.
 
-The source for this fork is found at https://github.com/BigEd/6502js
+This fork also models 16-bit and 32-bit variations on the 6502:
+    see 65Org16 discussions at http://forum.6502.org/viewtopic.php?t=1982
+
+The source for this fork is found at https://github.com/MorrisMA/6502js
 
 Note that the simulated machine has a memory mapped display, input, and random byte generator.
-
 This fork also implements the WDM opcode: an operand of 0 sends a byte to output.
     </div>
-
     <script src="es5-shim.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="assembler.js"></script>
