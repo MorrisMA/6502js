@@ -1872,107 +1872,108 @@ function SimulatorWidget(node) {
     var codeAssembledOK = false;
 
     var Opcodes = [
-    /*  Name,   Imm,  ZP ,  ZPX,  ZPY,  ABS, ABSX, ABSY,  IND, INDX, INDY, SNGL, BRA */
-      ["ADC",  0x69, 0x65, 0x75, null, 0x6d, 0x7d, 0x79, 0x72, 0x61, 0x71, null, null],
-      ["AND",  0x29, 0x25, 0x35, null, 0x2d, 0x3d, 0x39, 0x32, 0x21, 0x31, null, null],
-      ["ASL",  null, 0x06, 0x16, null, 0x0e, 0x1e, null, null, null, null, 0x0a, null],
-      ["BBR0", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBR1", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBR2", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBR3", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBR4", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBR5", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBR6", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBR7", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS0", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS1", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS2", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS3", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS4", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS5", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS6", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BBS7", null, null, null, null, null, null, null, null, null, null, null, null],
-      ["BCC",  null, null, null, null, null, null, null, null, null, null, null, 0x90],
-      ["BCS",  null, null, null, null, null, null, null, null, null, null, null, 0xb0],
-      ["BEQ",  null, null, null, null, null, null, null, null, null, null, null, 0xf0],
-      ["BIT",  0x89, 0x24, 0x34, null, 0x2c, 0x3c, null, null, null, null, null, null],
-      ["BMI",  null, null, null, null, null, null, null, null, null, null, null, 0x30],
-      ["BNE",  null, null, null, null, null, null, null, null, null, null, null, 0xd0],
-      ["BPL",  null, null, null, null, null, null, null, null, null, null, null, 0x10],
-      ["BRA",  null, null, null, null, null, null, null, null, null, null, null, 0x80],
-      ["BRK",  null, null, null, null, null, null, null, null, null, null, 0x00, null],
-      ["BVC",  null, null, null, null, null, null, null, null, null, null, null, 0x50],
-      ["BVS",  null, null, null, null, null, null, null, null, null, null, null, 0x70],
-      ["CLC",  null, null, null, null, null, null, null, null, null, null, 0x18, null],
-      ["CLD",  null, null, null, null, null, null, null, null, null, null, 0xd8, null],
-      ["CLI",  null, null, null, null, null, null, null, null, null, null, 0x58, null],
-      ["CLV",  null, null, null, null, null, null, null, null, null, null, 0xb8, null],
-      ["CMP",  0xc9, 0xc5, 0xd5, null, 0xcd, 0xdd, 0xd9, 0xd2, 0xc1, 0xd1, null, null],
-      ["CPX",  0xe0, 0xe4, null, null, 0xec, null, null, null, null, null, null, null],
-      ["CPY",  0xc0, 0xc4, null, null, 0xcc, null, null, null, null, null, null, null],
-      ["DEC",  null, 0xc6, 0xd6, null, 0xce, 0xde, null, null, null, null, 0x3a, null],
-      ["DEX",  null, null, null, null, null, null, null, null, null, null, 0xca, null],
-      ["DEY",  null, null, null, null, null, null, null, null, null, null, 0x88, null],
-      ["EOR",  0x49, 0x45, 0x55, null, 0x4d, 0x5d, 0x59, 0x52, 0x41, 0x51, null, null],
-      ["INC",  null, 0xe6, 0xf6, null, 0xee, 0xfe, null, null, null, null, 0x1a, null],
-      ["INX",  null, null, null, null, null, null, null, null, null, null, 0xe8, null],
-      ["INY",  null, null, null, null, null, null, null, null, null, null, 0xc8, null],
-      ["JMP",  null, null, null, null, 0x4c, null, null, 0x6c, null, null, null, null],
-      ["JSR",  null, null, null, null, 0x20, null, null, null, null, null, null, null],
-      ["LDA",  0xa9, 0xa5, 0xb5, null, 0xad, 0xbd, 0xb9, 0xb2, 0xa1, 0xb1, null, null],
-      ["LDX",  0xa2, 0xa6, null, 0xb6, 0xae, null, 0xbe, null, null, null, null, null],
-      ["LDY",  0xa0, 0xa4, 0xb4, null, 0xac, 0xbc, null, null, null, null, null, null],
-      ["LSR",  null, 0x46, 0x56, null, 0x4e, 0x5e, null, null, null, null, 0x4a, null],
-      ["NOP",  null, null, null, null, null, null, null, null, null, null, 0xea, null],
-      ["ORA",  0x09, 0x05, 0x15, null, 0x0d, 0x1d, 0x19, 0x12, 0x01, 0x11, null, null],
-      ["PHA",  null, null, null, null, null, null, null, null, null, null, 0x48, null],
-      ["PHP",  null, null, null, null, null, null, null, null, null, null, 0x08, null],
-      ["PHX",  null, null, null, null, null, null, null, null, null, null, 0xda, null],
-      ["PHY",  null, null, null, null, null, null, null, null, null, null, 0x5a, null],
-      ["PLA",  null, null, null, null, null, null, null, null, null, null, 0x68, null],
-      ["PLP",  null, null, null, null, null, null, null, null, null, null, 0x28, null],
-      ["PLX",  null, null, null, null, null, null, null, null, null, null, 0xfa, null],
-      ["PLY",  null, null, null, null, null, null, null, null, null, null, 0x7a, null],
-      ["RMB0", null, 0x07, null, null, null, null, null, null, null, null, null, null],
-      ["RMB1", null, 0x17, null, null, null, null, null, null, null, null, null, null],
-      ["RMB2", null, 0x27, null, null, null, null, null, null, null, null, null, null],
-      ["RMB3", null, 0x37, null, null, null, null, null, null, null, null, null, null],
-      ["RMB4", null, 0x47, null, null, null, null, null, null, null, null, null, null],
-      ["RMB5", null, 0x57, null, null, null, null, null, null, null, null, null, null],
-      ["RMB6", null, 0x67, null, null, null, null, null, null, null, null, null, null],
-      ["RMB7", null, 0x77, null, null, null, null, null, null, null, null, null, null],
-      ["ROR",  null, 0x66, 0x76, null, 0x6e, 0x7e, null, null, null, null, 0x6a, null],
-      ["ROL",  null, 0x26, 0x36, null, 0x2e, 0x3e, null, null, null, null, 0x2a, null],
-      ["RTI",  null, null, null, null, null, null, null, null, null, null, 0x40, null],
-      ["RTS",  null, null, null, null, null, null, null, null, null, null, 0x60, null],
-      ["SBC",  0xe9, 0xe5, 0xf5, null, 0xed, 0xfd, 0xf9, null, 0xe1, 0xf1, 0xf2, null],
-      ["SEC",  null, null, null, null, null, null, null, null, null, null, 0x38, null],
-      ["SEI",  null, null, null, null, null, null, null, null, null, null, 0x78, null],
-      ["SED",  null, null, null, null, null, null, null, null, null, null, 0xf8, null],
-      ["SMB0", null, 0x87, null, null, null, null, null, null, null, null, null, null],
-      ["SMB1", null, 0x97, null, null, null, null, null, null, null, null, null, null],
-      ["SMB2", null, 0xa7, null, null, null, null, null, null, null, null, null, null],
-      ["SMB3", null, 0xb7, null, null, null, null, null, null, null, null, null, null],
-      ["SMB4", null, 0xc7, null, null, null, null, null, null, null, null, null, null],
-      ["SMB5", null, 0xd7, null, null, null, null, null, null, null, null, null, null],
-      ["SMB6", null, 0xe7, null, null, null, null, null, null, null, null, null, null],
-      ["SMB7", null, 0xf7, null, null, null, null, null, null, null, null, null, null],
-      ["STA",  null, 0x85, 0x95, null, 0x8d, 0x9d, 0x99, 0x92, 0x81, 0x91, null, null],
-      ["STP",  null, null, null, null, null, null, null, null, null, null, 0xdb, null],
-      ["STX",  null, 0x86, null, 0x96, 0x8e, null, null, null, null, null, null, null],
-      ["STY",  null, 0x84, 0x94, null, 0x8c, null, null, null, null, null, null, null],
-      ["STZ",  null, 0x64, 0x74, null, 0x9c, 0x9e, null, null, null, null, null, null],
-      ["TAX",  null, null, null, null, null, null, null, null, null, null, 0xaa, null],
-      ["TAY",  null, null, null, null, null, null, null, null, null, null, 0xa8, null],
-      ["TRB",  null, 0x14, null, null, 0x1c, null, null, null, null, null, null, null],
-      ["TSB",  null, 0x04, null, null, 0x0c, null, null, null, null, null, null, null],
-      ["TSX",  null, null, null, null, null, null, null, null, null, null, 0xba, null],
-      ["TXA",  null, null, null, null, null, null, null, null, null, null, 0x8a, null],
-      ["TXS",  null, null, null, null, null, null, null, null, null, null, 0x9a, null],
-      ["TYA",  null, null, null, null, null, null, null, null, null, null, 0x98, null],
-      ["WAI",  null, null, null, null, null, null, null, null, null, null, 0xcb, null],
-      ["WDM",  0x42, 0x42, null, null, null, null, null, null, null, null, null, null],
-      ["---",  null, null, null, null, null, null, null, null, null, null, null, null]
+    /*    0 ,   1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 ,  13 ,   14 ,   15  */
+    /*  Name,   Imm,  ZP ,  ZPX,  ZPY,  Abs, AbsX, AbsY,  ZPI, ZPXI, ZPIY,  Imp,  Rel, AbsI, AbsXI, ZP,Rel*/
+      ["ADC",  0x69, 0x65, 0x75, null, 0x6d, 0x7d, 0x79, 0x72, 0x61, 0x71, null, null, null,  null,  null],
+      ["AND",  0x29, 0x25, 0x35, null, 0x2d, 0x3d, 0x39, 0x32, 0x21, 0x31, null, null, null,  null,  null],
+      ["ASL",  null, 0x06, 0x16, null, 0x0e, 0x1e, null, null, null, null, 0x0a, null, null,  null,  null],
+      ["BBR0", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf0],
+      ["BBR1", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf1],
+      ["BBR2", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf2],
+      ["BBR3", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf3],
+      ["BBR4", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf4],
+      ["BBR5", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf5],
+      ["BBR6", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf6],
+      ["BBR7", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf7],
+      ["BBS0", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf8],
+      ["BBS1", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xf9],
+      ["BBS2", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xfa],
+      ["BBS3", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xfb],
+      ["BBS4", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xfc],
+      ["BBS5", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xfd],
+      ["BBS6", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xfe],
+      ["BBS7", null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  0xff],
+      ["BCC",  null, null, null, null, null, null, null, null, null, null, null, 0x90, null,  null,  null],
+      ["BCS",  null, null, null, null, null, null, null, null, null, null, null, 0xb0, null,  null,  null],
+      ["BEQ",  null, null, null, null, null, null, null, null, null, null, null, 0xf0, null,  null,  null],
+      ["BIT",  0x89, 0x24, 0x34, null, 0x2c, 0x3c, null, null, null, null, null, null, null,  null,  null],
+      ["BMI",  null, null, null, null, null, null, null, null, null, null, null, 0x30, null,  null,  null],
+      ["BNE",  null, null, null, null, null, null, null, null, null, null, null, 0xd0, null,  null,  null],
+      ["BPL",  null, null, null, null, null, null, null, null, null, null, null, 0x10, null,  null,  null],
+      ["BRA",  null, null, null, null, null, null, null, null, null, null, null, 0x80, null,  null,  null],
+      ["BRK",  null, null, null, null, null, null, null, null, null, null, 0x00, null, null,  null,  null],
+      ["BVC",  null, null, null, null, null, null, null, null, null, null, null, 0x50, null,  null,  null],
+      ["BVS",  null, null, null, null, null, null, null, null, null, null, null, 0x70, null,  null,  null],
+      ["CLC",  null, null, null, null, null, null, null, null, null, null, 0x18, null, null,  null,  null],
+      ["CLD",  null, null, null, null, null, null, null, null, null, null, 0xd8, null, null,  null,  null],
+      ["CLI",  null, null, null, null, null, null, null, null, null, null, 0x58, null, null,  null,  null],
+      ["CLV",  null, null, null, null, null, null, null, null, null, null, 0xb8, null, null,  null,  null],
+      ["CMP",  0xc9, 0xc5, 0xd5, null, 0xcd, 0xdd, 0xd9, 0xd2, 0xc1, 0xd1, null, null, null,  null,  null],
+      ["CPX",  0xe0, 0xe4, null, null, 0xec, null, null, null, null, null, null, null, null,  null,  null],
+      ["CPY",  0xc0, 0xc4, null, null, 0xcc, null, null, null, null, null, null, null, null,  null,  null],
+      ["DEC",  null, 0xc6, 0xd6, null, 0xce, 0xde, null, null, null, null, 0x3a, null, null,  null,  null],
+      ["DEX",  null, null, null, null, null, null, null, null, null, null, 0xca, null, null,  null,  null],
+      ["DEY",  null, null, null, null, null, null, null, null, null, null, 0x88, null, null,  null,  null],
+      ["EOR",  0x49, 0x45, 0x55, null, 0x4d, 0x5d, 0x59, 0x52, 0x41, 0x51, null, null, null,  null,  null],
+      ["INC",  null, 0xe6, 0xf6, null, 0xee, 0xfe, null, null, null, null, 0x1a, null, null,  null,  null],
+      ["INX",  null, null, null, null, null, null, null, null, null, null, 0xe8, null, null,  null,  null],
+      ["INY",  null, null, null, null, null, null, null, null, null, null, 0xc8, null, null,  null,  null],
+      ["JMP",  null, null, null, null, 0x4c, null, null, null, null, null, null, null, 0x6c,  0x7c,  null],
+      ["JSR",  null, null, null, null, 0x20, null, null, null, null, null, null, null, null,  null,  null],
+      ["LDA",  0xa9, 0xa5, 0xb5, null, 0xad, 0xbd, 0xb9, 0xb2, 0xa1, 0xb1, null, null, null,  null,  null],
+      ["LDX",  0xa2, 0xa6, null, 0xb6, 0xae, null, 0xbe, null, null, null, null, null, null,  null,  null],
+      ["LDY",  0xa0, 0xa4, 0xb4, null, 0xac, 0xbc, null, null, null, null, null, null, null,  null,  null],
+      ["LSR",  null, 0x46, 0x56, null, 0x4e, 0x5e, null, null, null, null, 0x4a, null, null,  null,  null],
+      ["NOP",  null, null, null, null, null, null, null, null, null, null, 0xea, null, null,  null,  null],
+      ["ORA",  0x09, 0x05, 0x15, null, 0x0d, 0x1d, 0x19, 0x12, 0x01, 0x11, null, null, null,  null,  null],
+      ["PHA",  null, null, null, null, null, null, null, null, null, null, 0x48, null, null,  null,  null],
+      ["PHP",  null, null, null, null, null, null, null, null, null, null, 0x08, null, null,  null,  null],
+      ["PHX",  null, null, null, null, null, null, null, null, null, null, 0xda, null, null,  null,  null],
+      ["PHY",  null, null, null, null, null, null, null, null, null, null, 0x5a, null, null,  null,  null],
+      ["PLA",  null, null, null, null, null, null, null, null, null, null, 0x68, null, null,  null,  null],
+      ["PLP",  null, null, null, null, null, null, null, null, null, null, 0x28, null, null,  null,  null],
+      ["PLX",  null, null, null, null, null, null, null, null, null, null, 0xfa, null, null,  null,  null],
+      ["PLY",  null, null, null, null, null, null, null, null, null, null, 0x7a, null, null,  null,  null],
+      ["RMB0", null, 0x07, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["RMB1", null, 0x17, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["RMB2", null, 0x27, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["RMB3", null, 0x37, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["RMB4", null, 0x47, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["RMB5", null, 0x57, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["RMB6", null, 0x67, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["RMB7", null, 0x77, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["ROR",  null, 0x66, 0x76, null, 0x6e, 0x7e, null, null, null, null, 0x6a, null, null,  null,  null],
+      ["ROL",  null, 0x26, 0x36, null, 0x2e, 0x3e, null, null, null, null, 0x2a, null, null,  null,  null],
+      ["RTI",  null, null, null, null, null, null, null, null, null, null, 0x40, null, null,  null,  null],
+      ["RTS",  null, null, null, null, null, null, null, null, null, null, 0x60, null, null,  null,  null],
+      ["SBC",  0xe9, 0xe5, 0xf5, null, 0xed, 0xfd, 0xf9, null, 0xe1, 0xf1, 0xf2, null, null,  null,  null],
+      ["SEC",  null, null, null, null, null, null, null, null, null, null, 0x38, null, null,  null,  null],
+      ["SEI",  null, null, null, null, null, null, null, null, null, null, 0x78, null, null,  null,  null],
+      ["SED",  null, null, null, null, null, null, null, null, null, null, 0xf8, null, null,  null,  null],
+      ["SMB0", null, 0x87, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["SMB1", null, 0x97, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["SMB2", null, 0xa7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["SMB3", null, 0xb7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["SMB4", null, 0xc7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["SMB5", null, 0xd7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["SMB6", null, 0xe7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["SMB7", null, 0xf7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["STA",  null, 0x85, 0x95, null, 0x8d, 0x9d, 0x99, 0x92, 0x81, 0x91, null, null, null,  null,  null],
+      ["STP",  null, null, null, null, null, null, null, null, null, null, 0xdb, null, null,  null,  null],
+      ["STX",  null, 0x86, null, 0x96, 0x8e, null, null, null, null, null, null, null, null,  null,  null],
+      ["STY",  null, 0x84, 0x94, null, 0x8c, null, null, null, null, null, null, null, null,  null,  null],
+      ["STZ",  null, 0x64, 0x74, null, 0x9c, 0x9e, null, null, null, null, null, null, null,  null,  null],
+      ["TAX",  null, null, null, null, null, null, null, null, null, null, 0xaa, null, null,  null,  null],
+      ["TAY",  null, null, null, null, null, null, null, null, null, null, 0xa8, null, null,  null,  null],
+      ["TRB",  null, 0x14, null, null, 0x1c, null, null, null, null, null, null, null, null,  null,  null],
+      ["TSB",  null, 0x04, null, null, 0x0c, null, null, null, null, null, null, null, null,  null,  null],
+      ["TSX",  null, null, null, null, null, null, null, null, null, null, 0xba, null, null,  null,  null],
+      ["TXA",  null, null, null, null, null, null, null, null, null, null, 0x8a, null, null,  null,  null],
+      ["TXS",  null, null, null, null, null, null, null, null, null, null, 0x9a, null, null,  null,  null],
+      ["TYA",  null, null, null, null, null, null, null, null, null, null, 0x98, null, null,  null,  null],
+      ["WAI",  null, null, null, null, null, null, null, null, null, null, 0xcb, null, null,  null,  null],
+      ["WDM",  0x42, 0x42, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
+      ["---",  null, null, null, null, null, null, null, null, null, null, null, null, null,  null,  null]
     ];
 
     // assembleCode()
@@ -2112,18 +2113,21 @@ function SimulatorWidget(node) {
       for (var o = 0; o < Opcodes.length; o++) {
         if (Opcodes[o][0] === command) {
           // most specific patterns first to avoid false matches; detect zp before abs
-          if (checkImp  (param, Opcodes[o][11])) { return true; }
-          if (checkZPI  (param, Opcodes[o][ 8])) { return true; }
-          if (checkZPXI (param, Opcodes[o][ 9])) { return true; }
-          if (checkZPIY (param, Opcodes[o][10])) { return true; }
-          if (checkImm  (param, Opcodes[o][ 1])) { return true; }
-          if (checkZPX  (param, Opcodes[o][ 3])) { return true; }
-          if (checkZPY  (param, Opcodes[o][ 4])) { return true; }
-          if (checkZP   (param, Opcodes[o][ 2])) { return true; }
-          if (checkAbsX (param, Opcodes[o][ 6])) { return true; }
-          if (checkAbsY (param, Opcodes[o][ 7])) { return true; }
-          if (checkAbs  (param, Opcodes[o][ 5])) { return true; }
-          if (checkRel  (param, Opcodes[o][12])) { return true; }
+          if (checkImp  (param, Opcodes[o][11])) { return true; }   // Implied
+          if (checkZPI  (param, Opcodes[o][ 8])) { return true; }   // Zero Page Indirect
+          if (checkZPXI (param, Opcodes[o][ 9])) { return true; }   // Pre-indexed Zero Page Indirect
+          if (checkZPIY (param, Opcodes[o][10])) { return true; }   // Post-indexed Zero Page Indirect
+          if (checkImm  (param, Opcodes[o][ 1])) { return true; }   // Immediate
+          if (checkZPX  (param, Opcodes[o][ 3])) { return true; }   // Pre-indexed Zero Page Direct
+          if (checkZPY  (param, Opcodes[o][ 4])) { return true; }   // Post-indexed Zero Page Direct
+          if (checkZP   (param, Opcodes[o][ 2])) { return true; }   // Zero Page Direct
+          if (checkAbsX (param, Opcodes[o][ 6])) { return true; }   // Pre-indexed Absolute Direct
+          if (checkAbsY (param, Opcodes[o][ 7])) { return true; }   // Post-indexed Absolute Direct
+          if (checkAbs  (param, Opcodes[o][ 5])) { return true; }   // Absolute Direct
+          if (checkRel  (param, Opcodes[o][12])) { return true; }   // Relative (Branch)
+          if (checkAbsI (param, Opcodes[o][13])) { return true; }   // Absolute Indirect
+          if (checkAbsXI(param, Opcodes[o][14])) { return true; }   // Pre-Indexed Absolute Indirect
+//          if (checkZPRel(param, Opcodes[o][15])) { return true; }   // Zero Page Direct, Relative
         }
       }
       return false; // Unknown opcode
@@ -2191,7 +2195,7 @@ function SimulatorWidget(node) {
       return true;
     }
 
-    // checkImm() - Check if param is immediate and push value
+    // checkImm() - Check if param is #immediate and push value
 
     function checkImm(param, opcode) {
       var value, label, hilo, addr;
@@ -2235,7 +2239,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkZPI() - Check if param is indirect and push value
+    // checkZPI() - Check if param is (zp) and push value
 
     function checkZPI(param, opcode) {
       var value;
@@ -2243,8 +2247,6 @@ function SimulatorWidget(node) {
       if (param.match(/^\(\$[0-9a-f]+\)$/i)) {
         pushByte(opcode);
         value = param.replace(/^\(\$([0-9a-f]+).*$/i, "$1");
-//        if (value < 0 || value > simulator.am) { return false; }
-//        pushWord(parseInt(value, 16));
         if (value < 0 || value > simulator.dm) { return false; }
         pushByte(parseInt(value, 16));
         return true;
@@ -2252,7 +2254,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkZPXI() - Check if param is indirect X and push value
+    // checkZPXI() - Check if param is (zp,x) and push value
 
     function checkZPXI(param, opcode) {
       var value;
@@ -2267,7 +2269,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkZPIY() - Check if param is indirect Y and push value
+    // checkZPIY() - Check if param is (zp),y and push value
 
     function checkZPIY(param, opcode) {
       var value;
@@ -2292,7 +2294,7 @@ function SimulatorWidget(node) {
       return true;
     }
 
-    // checkZP() - Check if param is ZP and push value
+    // checkZP() - Check if param is zp and push value
 
     function checkZP(param, opcode) {
       var value;
@@ -2307,7 +2309,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkAbsX() - Check if param is ABSX and push value
+    // checkAbsX() - Check if param is abs,x and push value
 
     function checkAbsX(param, opcode) {
       var value;
@@ -2323,7 +2325,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkAbsY() - Check if param is ABSY and push value
+    // checkAbsY() - Check if param is abs,y and push value
 
     function checkAbsY(param, opcode) {
       var value;
@@ -2339,7 +2341,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkZPX() - Check if param is ZPX and push value
+    // checkZPX() - Check if param is zp,x and push value
 
     function checkZPX(param, opcode) {
       var value;
@@ -2355,6 +2357,8 @@ function SimulatorWidget(node) {
       return false;
     }
 
+    // checkZPY() - Check if param is zp,y and push value
+
     function checkZPY(param, opcode) {
       var value;
       if (opcode === null) { return false; }
@@ -2369,7 +2373,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkAbs() - Check if param is ABS and push value
+    // checkAbs() - Check if param is abs and push value
 
     function checkAbs(param, opcode) {
       var value;
@@ -2379,6 +2383,36 @@ function SimulatorWidget(node) {
         if (value < 0 || value > simulator.am) { return false; }
         pushByte(opcode);
         pushWord(value);
+        return true;
+      }
+      return false;
+    }
+
+    // checkAbsI() - Check if param is (abs) and push value
+
+    function checkAbsI(param, opcode) {
+      var value;
+      if (opcode === null) { return false; }
+      if (param.match(/^\(\$[0-9a-f]+\)$/i)) {
+        pushByte(opcode);
+        value = param.replace(/^\(\$([0-9a-f]+).*$/i, "$1");
+        if (value < 0 || value > simulator.am) { return false; }
+        pushWord(parseInt(value, 16));
+        return true;
+      }
+      return false;
+    }
+
+    // checkAbsXI() - Check if param is (abs,x) and push value
+
+    function checkAbsXI(param, opcode) {
+      var value;
+      if (opcode === null) { return false; }
+      if (param.match(/^\(\$[0-9a-f]+,X\)$/i)) {
+        pushByte(opcode);
+        value = param.replace(/^\(\$([0-9a-f]+).*$/i, "$1");
+        if (value < 0 || value > simulator.am) { return false; }
+        pushWord(parseInt(value, 16));
         return true;
       }
       return false;
