@@ -2243,8 +2243,10 @@ function SimulatorWidget(node) {
       if (param.match(/^\(\$[0-9a-f]+\)$/i)) {
         pushByte(opcode);
         value = param.replace(/^\(\$([0-9a-f]+).*$/i, "$1");
-        if (value < 0 || value > simulator.am) { return false; }
-        pushWord(parseInt(value, 16));
+//        if (value < 0 || value > simulator.am) { return false; }
+//        pushWord(parseInt(value, 16));
+        if (value < 0 || value > simulator.dm) { return false; }
+        pushByte(parseInt(value, 16));
         return true;
       }
       return false;
