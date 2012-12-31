@@ -2112,18 +2112,18 @@ function SimulatorWidget(node) {
       for (var o = 0; o < Opcodes.length; o++) {
         if (Opcodes[o][0] === command) {
           // most specific patterns first to avoid false matches; detect zp before abs
-          if (checkSingle   (param, Opcodes[o][11])) { return true; }
-          if (checkIndirect (param, Opcodes[o][ 8])) { return true; }
-          if (checkIndirectX(param, Opcodes[o][ 9])) { return true; }
-          if (checkIndirectY(param, Opcodes[o][10])) { return true; }
-          if (checkImmediate(param, Opcodes[o][ 1])) { return true; }
-          if (checkZeroPageX(param, Opcodes[o][ 3])) { return true; }
-          if (checkZeroPageY(param, Opcodes[o][ 4])) { return true; }
-          if (checkZeroPage (param, Opcodes[o][ 2])) { return true; }
-          if (checkAbsoluteX(param, Opcodes[o][ 6])) { return true; }
-          if (checkAbsoluteY(param, Opcodes[o][ 7])) { return true; }
-          if (checkAbsolute (param, Opcodes[o][ 5])) { return true; }
-          if (checkBranch(param,    Opcodes[o][12])) { return true; }
+          if (checkImp  (param, Opcodes[o][11])) { return true; }
+          if (checkZPI  (param, Opcodes[o][ 8])) { return true; }
+          if (checkZPXI (param, Opcodes[o][ 9])) { return true; }
+          if (checkZPIY (param, Opcodes[o][10])) { return true; }
+          if (checkImm  (param, Opcodes[o][ 1])) { return true; }
+          if (checkZPX  (param, Opcodes[o][ 3])) { return true; }
+          if (checkZPY  (param, Opcodes[o][ 4])) { return true; }
+          if (checkZP   (param, Opcodes[o][ 2])) { return true; }
+          if (checkAbsX (param, Opcodes[o][ 6])) { return true; }
+          if (checkAbsY (param, Opcodes[o][ 7])) { return true; }
+          if (checkAbs  (param, Opcodes[o][ 5])) { return true; }
+          if (checkRel  (param, Opcodes[o][12])) { return true; }
         }
       }
       return false; // Unknown opcode
@@ -2165,9 +2165,9 @@ function SimulatorWidget(node) {
       return true;
     }
 
-    // checkBranch() - Commom branch function for all branches (BCC, BCS, BEQ, BNE..)
+    // checkRel() - Commom branch function for all branches (BCC, BCS, BEQ, BNE..)
 
-    function checkBranch(param, opcode) {
+    function checkRel(param, opcode) {
       var addr;
       if (opcode === null) { return false; }
 
@@ -2191,9 +2191,9 @@ function SimulatorWidget(node) {
       return true;
     }
 
-    // checkImmediate() - Check if param is immediate and push value
+    // checkImm() - Check if param is immediate and push value
 
-    function checkImmediate(param, opcode) {
+    function checkImm(param, opcode) {
       var value, label, hilo, addr;
       if (opcode === null) { return false; }
       if (param.match(/^#\$[0-9a-f]+$/i)) {
@@ -2235,9 +2235,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkIndirect() - Check if param is indirect and push value
+    // checkZPI() - Check if param is indirect and push value
 
-    function checkIndirect(param, opcode) {
+    function checkZPI(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^\(\$[0-9a-f]+\)$/i)) {
@@ -2252,9 +2252,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkIndirectX() - Check if param is indirect X and push value
+    // checkZPXI() - Check if param is indirect X and push value
 
-    function checkIndirectX(param, opcode) {
+    function checkZPXI(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^\(\$[0-9a-f]+,X\)$/i)) {
@@ -2267,9 +2267,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkIndirectY() - Check if param is indirect Y and push value
+    // checkZPIY() - Check if param is indirect Y and push value
 
-    function checkIndirectY(param, opcode) {
+    function checkZPIY(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^\(\$[0-9a-f]+\),Y$/i)) {
@@ -2282,9 +2282,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkSingle() - Single-byte opcodes
+    // checkImp() - Single-byte opcodes
 
-    function checkSingle(param, opcode) {
+    function checkImp(param, opcode) {
       if (opcode === null) { return false; }
       // Accumulator instructions are counted as single-byte opcodes
       if (param !== "" && param !== "A") { return false; }
@@ -2292,9 +2292,9 @@ function SimulatorWidget(node) {
       return true;
     }
 
-    // checkZeroPage() - Check if param is ZP and push value
+    // checkZP() - Check if param is ZP and push value
 
-    function checkZeroPage(param, opcode) {
+    function checkZP(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^.*\w+.*$/i)) {
@@ -2307,9 +2307,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkAbsoluteX() - Check if param is ABSX and push value
+    // checkAbsX() - Check if param is ABSX and push value
 
-    function checkAbsoluteX(param, opcode) {
+    function checkAbsX(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^.*\w+.*,X$/i)) {
@@ -2323,9 +2323,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkAbsoluteY() - Check if param is ABSY and push value
+    // checkAbsY() - Check if param is ABSY and push value
 
-    function checkAbsoluteY(param, opcode) {
+    function checkAbsY(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^.*\w+.*,Y$/i)) {
@@ -2339,9 +2339,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkZeroPageX() - Check if param is ZPX and push value
+    // checkZPX() - Check if param is ZPX and push value
 
-    function checkZeroPageX(param, opcode) {
+    function checkZPX(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^.*\w+.*,X$/i)) {
@@ -2355,7 +2355,7 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    function checkZeroPageY(param, opcode) {
+    function checkZPY(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^.*\w+.*,Y$/i)) {
@@ -2369,9 +2369,9 @@ function SimulatorWidget(node) {
       return false;
     }
 
-    // checkAbsolute() - Check if param is ABS and push value
+    // checkAbs() - Check if param is ABS and push value
 
-    function checkAbsolute(param, opcode) {
+    function checkAbs(param, opcode) {
       var value;
       if (opcode === null) { return false; }
       if (param.match(/^.*\w+.*$/i)) {
