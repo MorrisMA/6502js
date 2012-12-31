@@ -1708,11 +1708,12 @@ function SimulatorWidget(node) {
       regP = 0x30;  // the B bit is absent, but always reads as 1
       updateDebugInfo();
 
-      var l=['ABS','ABSX','ABSY','IND']
-      for(var i in l){
-        if (simulator.aw > simulator.dw){
-          assembler.instructionLength[l[i]] = 3;
-        } else {
+//      var l=['ABS','ABSX','ABSY','IND']
+      var l=['ABS','ABSX','ABSY']                   // Removed 'IND' from list, 
+      for(var i in l){                              // 'IND' should refer to 
+        if (simulator.aw > simulator.dw){           // (zp) address mode not
+          assembler.instructionLength[l[i]] = 3;    // (abs) address mode.
+        } else {                                    // mam, 12L31
           assembler.instructionLength[l[i]] = 2;
         }
       }
@@ -1763,19 +1764,24 @@ function SimulatorWidget(node) {
 
     // indexLine(line) - extract label if line contains one and calculate position in memory.
     // Return false if label alread exists.
+
     function indexLine(input) {
       // remove comments
+
       input = input.replace(/^(.*?);.*/, "$1");
 
       // trim line
+
       input = input.replace(/^\s+/, "");
       input = input.replace(/\s+$/, "");
 
       // Figure out how many bytes this instruction takes
+
       var currentPC = assembler.getCurrentPC();
       assembler.assembleLine(input); //TODO: find a better way for Labels to have access to assembler
 
       // Find command or label
+
       if (input.match(/^\w+:/)) {
         var label = input.replace(/(^\w+):.*$/, "$1");
         return push(label + "|" + currentPC);
@@ -1788,6 +1794,7 @@ function SimulatorWidget(node) {
     }
 
     // push() - Push label to array. Return false if label already exists.
+
     function push(name) {
       if (find(name)) {
         return false;
@@ -1797,6 +1804,7 @@ function SimulatorWidget(node) {
     }
 
     // find() - Returns true if label exists.
+
     function find(name) {
       var nameAndAddr;
       for (var i = 0; i < labelIndex.length; i++) {
@@ -1809,6 +1817,7 @@ function SimulatorWidget(node) {
     }
 
     // setPC() - Associates label with address
+
     function setPC(name, addr) {
       var nameAndAddr;
       for (var i = 0; i < labelIndex.length; i++) {
@@ -1822,6 +1831,7 @@ function SimulatorWidget(node) {
     }
 
     // getPC() - Get address associated with label
+
     function getPC(name) {
       var nameAndAddr;
       for (var i = 0; i < labelIndex.length; i++) {
@@ -1967,6 +1977,7 @@ function SimulatorWidget(node) {
 
     // assembleCode()
     // "assembles" the code into memory
+
     function assembleCode() {
       simulator.reset();
       labels.reset();
@@ -2028,25 +2039,33 @@ function SimulatorWidget(node) {
 
       // remove comments
 
+      // match from the beginning of the line(^) and capture("(...)") non line-ending characters(.)
+      // any number of times(*) optionally(?) terminated by ";" followed by 0 or more non
+      // line-ending characters(.*) optionally(?), and replace input line with capture group 1 ("$1")
+      //    Capture group 1 will include leading and trailing whitespace
       input = input.replace(/^(.*?);.*/, "$1");
 
-      // trim line
-
-      input = input.replace(/^\s+/, "");
-      input = input.replace(/\s+$/, "");
+      // trim line; first from the start to first non-whitespace,
+      //            and then from the end back to last non-whitespace
+      
+      // match at the beginning of the line(^) whitespace(\s) any number times(+), and replace with ""
+      input = input.replace(/^\s+/, "");    
+      // match whitespace(\s) any number times(+) at the end of the line($), and replace with ""
+      input = input.replace(/\s+$/, "");    
 
       // Find command or label
 
       if (input.match(/^\w+:/)) {
-        label = input.replace(/(^\w+):.*$/, "$1");
+        label = input.replace(/(^\w+):.*$/, "$1");          // extract label
         if (input.match(/^\w+:[\s]*\w+.*$/)) {
-          input = input.replace(/^\w+:[\s]*(.*)$/, "$1");
-          command = input.replace(/^(\w+).*$/, "$1");
+          input   = input.replace(/^\w+:[\s]*(.*)$/, "$1"); // trim label
+          command = input.replace(/^(\w+).*$/, "$1");       // extract command/instruction
         } else {
           command = "";
         }
       } else {
-        command = input.replace(/^(\w+).*$/, "$1");
+        command = input.replace(/^(\w+).*$/, "$1");         // extract command/instruction
+//        input   = input.replace(/^\w+[\s]*(.*)$/, "$1");    // trim command, mam, 12L31
       }
 
       // Blank line?  Return.
@@ -2067,7 +2086,7 @@ function SimulatorWidget(node) {
           return false;
         }
         command = input.replace(/^(\*|\w+)\s*=.*$/, "$1");
-        if (command == "*")
+        if (command === "*") //changed == to ===, per recommendations; 12L31/mam
           defaultCodePC = addr;
         else
           labels.set(command, addr);
@@ -2090,22 +2109,21 @@ function SimulatorWidget(node) {
         return DCB(param);
       }
 
-
       for (var o = 0; o < Opcodes.length; o++) {
         if (Opcodes[o][0] === command) {
           // most specific patterns first to avoid false matches; detect zp before abs
-          if (checkSingle(param, Opcodes[o][11])) { return true; }
-          if (checkIndirect(param, Opcodes[o][8])) { return true; }
-          if (checkIndirectX(param, Opcodes[o][9])) { return true; }
+          if (checkSingle   (param, Opcodes[o][11])) { return true; }
+          if (checkIndirect (param, Opcodes[o][ 8])) { return true; }
+          if (checkIndirectX(param, Opcodes[o][ 9])) { return true; }
           if (checkIndirectY(param, Opcodes[o][10])) { return true; }
-          if (checkImmediate(param, Opcodes[o][1])) { return true; }
-          if (checkZeroPageX(param, Opcodes[o][3])) { return true; }
-          if (checkZeroPageY(param, Opcodes[o][4])) { return true; }
-          if (checkZeroPage(param, Opcodes[o][2])) { return true; }
-          if (checkAbsoluteX(param, Opcodes[o][6])) { return true; }
-          if (checkAbsoluteY(param, Opcodes[o][7])) { return true; }
-          if (checkAbsolute(param, Opcodes[o][5])) { return true; }
-          if (checkBranch(param, Opcodes[o][12])) { return true; }
+          if (checkImmediate(param, Opcodes[o][ 1])) { return true; }
+          if (checkZeroPageX(param, Opcodes[o][ 3])) { return true; }
+          if (checkZeroPageY(param, Opcodes[o][ 4])) { return true; }
+          if (checkZeroPage (param, Opcodes[o][ 2])) { return true; }
+          if (checkAbsoluteX(param, Opcodes[o][ 6])) { return true; }
+          if (checkAbsoluteY(param, Opcodes[o][ 7])) { return true; }
+          if (checkAbsolute (param, Opcodes[o][ 5])) { return true; }
+          if (checkBranch(param,    Opcodes[o][12])) { return true; }
         }
       }
       return false; // Unknown opcode
