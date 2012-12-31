@@ -1708,12 +1708,11 @@ function SimulatorWidget(node) {
       regP = 0x30;  // the B bit is absent, but always reads as 1
       updateDebugInfo();
 
-//      var l=['ABS','ABSX','ABSY','IND']
-      var l=['ABS','ABSX','ABSY']                   // Removed 'IND' from list, 
-      for(var i in l){                              // 'IND' should refer to 
-        if (simulator.aw > simulator.dw){           // (zp) address mode not
-          assembler.instructionLength[l[i]] = 3;    // (abs) address mode.
-        } else {                                    // mam, 12L31
+      var l=['Abs','AbsX','AbsY','AbsI', 'AbsXI', 'ZPRel']
+      for(var i in l){                              
+        if (simulator.aw > simulator.dw){          
+          assembler.instructionLength[l[i]] = 3;    
+        } else {                                    
           assembler.instructionLength[l[i]] = 2;
         }
       }
@@ -2463,29 +2462,35 @@ function SimulatorWidget(node) {
       'ZP',
       'ZPX',
       'ZPY',
-      'ABS',
-      'ABSX',
-      'ABSY',
-      'IND',
-      'INDX',
-      'INDY',
-      'SNGL',
-      'BRA'
+      'Abs',
+      'AbsX',
+      'AbsY',
+      'ZPI',
+      'ZPXI',
+      'ZPIY',
+      'Imp',
+      'Rel',
+      'AbsI',
+      'AbsXI',
+      'ZPRel'
     ];
 
     var instructionLength = {
-      Imm: 2,
-      ZP: 2,
-      ZPX: 2,
-      ZPY: 2,
-      ABS: 3,
-      ABSX: 3,
-      ABSY: 3,
-      IND: 3,
-      INDX: 2,
-      INDY: 2,
-      SNGL: 1,
-      BRA: 2
+      Imm   : 2,
+      ZP    : 2,
+      ZPX   : 2,
+      ZPY   : 2,
+      Abs   : 3,
+      AbsX  : 3,
+      AbsY  : 3,
+      ZPI   : 3,
+      ZPXI  : 2,
+      ZPIY  : 2,
+      Imp   : 1,
+      Rel   : 2,
+      AbsI  : 3,
+      AbsXI : 3,
+      ZPRel : 3,
     };
 
     function getModeAndCode(byte) {
@@ -2500,13 +2505,13 @@ function SimulatorWidget(node) {
 
       if (!line) { //instruction not found
         return {
-          opCode: '???',
-          mode: 'SNGL'
+          opCode : '???',
+          mode   : 'Imp'
         };
       } else {
         return {
-          opCode: line[0],
-          mode: addressingModes[index]
+          opCode : line[0],
+          mode   : addressingModes[index]
         };
       }
     }
@@ -2514,11 +2519,12 @@ function SimulatorWidget(node) {
     function createInstruction(address) {
       var bytes = [];
       var opCode;
-      var args = [];
+      var args  = [];
       var mode;
 
       function isAccumulatorInstruction() {
-        var accumulatorBytes = [0x0a, 0x4a, 0x2a, 0x6a];
+                             //  asl   inc   rol   dec   lsr   ror 
+        var accumulatorBytes = [0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x6a];
         if (accumulatorBytes.indexOf(bytes[0]) > -1) {
           return true;
         }
@@ -2545,16 +2551,20 @@ function SimulatorWidget(node) {
         if (argsString) {
           argsString = '$' + argsString;
         }
+        
         if (mode == 'Imm') {
           argsString = '#' + argsString;
         }
-        if (mode.match(/X$/)) {
+        
+        if (mode.match(/[x|xi]$/i)) {
           argsString += ',X';
         }
-        if (mode.match(/^IND/)) {
+        
+        if (mode.match(/^[zpi|zpxi|zpiy|absi|absxi]/i)) {
           argsString = '(' + argsString + ')';
         }
-        if (mode.match(/Y$/)) {
+        
+        if (mode.match(/[zpy|zpiy|absy]$/i)) {
           argsString += ',Y';
         }
 
