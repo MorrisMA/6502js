@@ -1,0 +1,236 @@
+    adc #$96
+    adc $56
+    adc $57,x
+    adc $6dd6
+    adc $7dd7,x
+    adc $7997,y
+    adc ($27)
+    adc ($16,x)
+    adc ($17),y
+;
+    and #$92
+    and $52
+    and $53,x
+    and $2dd2
+    and $3dd3,x
+    and $3993,y
+    and ($23)
+    and ($12,x)
+    and ($13),y
+;
+    asl $60
+    asl $61,x
+    asl $0ee0
+    asl $1ee1,x
+    asl a
+;
+    bcc Start
+    bcs Start
+    beq Start
+;
+    bit #$98
+    bit $42
+    bit $43,x
+    bit $2cc2
+    bit $3cc3,x
+;
+    bmi Start
+    bne Start
+    bpl Start
+    bra Start
+;
+    brk
+;
+    bvc Start
+    bvs Start
+;
+Start:
+;
+    clc
+    cld
+    cli
+    clv
+;
+    cmp #$9c
+    cmp $5c
+    cmp $5d,x
+    cmp $cddc
+    cmp $dddd,x
+    cmp $d99d,y
+    cmp ($2d)
+    cmp ($1c,x)
+    cmp ($1d),y
+;
+    cpx #$0e
+    cpx $4e
+    cpx $ecce
+;
+    cpy #$0c
+    cpy $4c
+    cpy $cccc
+;
+    dec $6c
+    dec $6d,x
+    dec $ceec
+    dec $deed,x
+    dec A
+;
+    dex
+    dey
+;
+    eor #$94
+    eor $54
+    eor $55,x
+    eor $4dd4
+    eor $5dd5,x
+    eor $5995,y
+    eor ($25)
+    eor ($14,x)
+    eor ($15),y
+;
+    inc $6e
+    inc $6f,x
+    inc $eeee
+    inc $feef,x
+    inc a
+;
+    inx
+    iny
+;
+    jmp $4cc4
+    jmp ($6cc6)
+    jmp ($7cc7,x)
+;
+    lda #$9a
+    lda $5a
+    lda $5b,x
+    lda $adda
+    lda $bddb,x
+    lda $b99b,y
+    lda ($2b)
+    lda ($1a,x)
+    lda ($1b),y
+;
+    ldx #$2a
+    ldx $6a
+    ldx $6b,y
+    ldx $aeea
+    ldx $beeb,y
+;
+    ldy #$0a
+    ldy $4a
+    ldy $4b,x
+    ldy $acca
+    ldy $bccb,x
+;
+    lsr $64
+    lsr $65,x
+    lsr $4ee4
+    lsr $5ee5,x
+    lsr A
+;
+    nop
+;    ora #$90
+    ora $50
+    ora $51,x
+    ora $0dd0
+    ora $1dd1,x
+    ora $1991,y
+    ora ($21)
+    ora ($10,x)
+    ora ($11),Y
+;
+    pha
+    php
+    phx
+    phy
+    pla
+    plp
+    plx
+    ply
+;
+    rol $62
+    rol $63,x
+    rol $2ee2
+    rol $3ee3,x
+    rol a
+;
+    ror $66
+    ror $67,x
+    ror $6ee6
+    ror $7ee7,x
+    ror A
+;
+    rti
+    rts
+;
+    sbc #$9e
+    sbc $5e
+    sbc $5f,x
+    sbc $edde
+    sbc $fddf,x
+    sbc $f99f,y
+    sbc ($2f)
+    sbc ($1e,x)
+    sbc ($1f),y
+;
+    sec
+    sei
+    sed
+;
+    sta $58
+    sta $59,x
+    sta $8dd8
+    sta $9dd9,x
+    sta $9999,y
+    sta ($29)
+    sta ($18,x)
+    sta ($19),y
+;
+    stx $68
+    stx $69,y
+    stx $8ee8
+;
+    sty $48
+    sty $49,x
+    sty $8cc8
+;
+    stz $46
+    stz $47,x
+    stz $9cc9
+    stz $9ee9,x
+;
+    tax
+    tay
+;
+    trb $41
+    trb $1cc1
+;
+    tsb $40
+    tsb $0cc0
+;
+    tsx
+    txa
+    txs
+;
+    wai
+    stp
+;
+    rmb0  $70
+    rmb1  $71
+    rmb2  $72
+    rmb3  $73
+    rmb4  $74
+    rmb5  $75
+    rmb6  $76
+    rmb7  $77
+;
+    smb0  $78
+    smb1  $79
+    smb2  $7a
+    smb3  $7b
+    smb4  $7c
+    smb5  $7d
+    smb6  $7e
+    smb7  $7f
+    
