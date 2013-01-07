@@ -233,4 +233,24 @@ Start:
     smb5  $7d
     smb6  $7e
     smb7  $7f
-    
+;
+BBRx:
+    bbr0 $f0,BBSx
+    bbr1 $f1,BBSx
+    bbr2 $f2,BBSx
+    bbr3 $f3,BBSx
+    bbr4 $f4,BBSx
+    bbr5 $f5,BBSx
+    bbr6 $f6,BBSx
+    bbr7 $f7,BBSx
+;
+    bbs0 $f8,BBRx
+    bbs1 $f9,BBRx
+    bbs2 $fa,BBRx
+    bbs3 $fb,BBRx
+    bbs4 $fc,BBRx
+    bbs5 $fd,BBRx
+    bbs6 $fe,BBRx
+    bbs7 $ff,BBRx
+BBSx:
+

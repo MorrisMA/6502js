@@ -8,6 +8,9 @@
 *  Generalised and extended by Ed Spittles
 *  https://github.com/BigEd/6502js
 *
+*  Extended to support the 65C02 by Michael A. Morris
+*  https://github.com/MorrisMA/6502js
+*
 *  Released under the GNU General Public License
 *  see http://gnu.org/licenses/gpl.html
 */
@@ -36,6 +39,7 @@ function SimulatorWidget(node) {
     $node.find('.resetButton').click(simulator.reset);
     $node.find('.hexdumpButton').click(assembler.hexdump);
     $node.find('.disassembleButton').click(assembler.disassemble);
+
     $node.find('.debug').change(function () {
       var debug = $(this).is(':checked');
       if (debug) {
@@ -46,28 +50,35 @@ function SimulatorWidget(node) {
         simulator.stopDebugger();
       }
     });
+
     $node.find('.monitoring').change(function () {
       ui.toggleMonitor();
       simulator.toggleMonitor();
     });
+
     $node.find('.stepButton').click(simulator.debugExec);
     $node.find('.gotoButton').click(simulator.gotoAddr);
     $node.find('.turboButton').click(simulator.toggleTurbo);
+
     $node.find('.modeSwitches').change(function () {
       var dw = parseInt($("input[@name=dataWidth]:checked").val());
       simulator.updateDw(dw);
       simulator.reset();
     });
+
     $node.find('.notesButton').click(ui.showNotes);
     $node.find('.code').keypress(simulator.stop);
     $node.find('.code').keypress(ui.initialize);
+
     $(document).keypress(memory.storeKeypress);
   }
 
   function stripText() {
     //Remove leading and trailing space in textarea
     var text = $node.find('.code').val();
+
     text = text.replace(/^\n+/, '').replace(/\s+$/, '');
+
     $node.find('.code').val(text);
   }
 
@@ -75,54 +86,56 @@ function SimulatorWidget(node) {
     var currentState;
 
     var start = {
-      assemble: true,
-      run: [false, 'Run'],
-      reset: false,
-      hexdump: false,
-      disassemble: false,
-      debug: [false, false]
+      assemble    : true,
+      run         : [false, 'Run'],
+      reset       : false,
+      hexdump     : false,
+      disassemble : false,
+      debug       : [false, false]
     };
 
     var assembled = {
-      assemble: false,
-      run: [true, 'Run'],
-      reset: true,
-      hexdump: true,
-      disassemble: true,
-      debug: [true, false]
+      assemble    : false,
+      run         : [true, 'Run'],
+      reset       : true,
+      hexdump     : true,
+      disassemble : true,
+      debug       : [true, false]
     };
 
     var running = {
-      assemble: false,
-      run: [true, 'Stop'],
-      reset: true,
-      hexdump: false,
-      disassemble: false,
-      debug: [true, false]
+      assemble    : false,
+      run         : [true, 'Stop'],
+      reset       : true,
+      hexdump     : false,
+      disassemble : false,
+      debug       : [true, false]
     };
 
     var debugging = {
-      assemble: false,
-      reset: true,
-      hexdump: true,
-      disassemble: true,
-      debug: [true, true]
+      assemble    : false,
+      reset       : true,
+      hexdump     : true,
+      disassemble : true,
+      debug       : [true, true]
     };
 
     var postDebugging = {
-      assemble: false,
-      reset: true,
-      hexdump: true,
-      disassemble: true,
-      debug: [true, false]
+      assemble    : false,
+      reset       : true,
+      hexdump     : true,
+      disassemble : true,
+      debug       : [true, false]
     };
 
     function setState(state) {
       $node.find('.assembleButton').attr('disabled', !state.assemble);
+
       if (state.run) {
         $node.find('.runButton').attr('disabled', !state.run[0]);
         $node.find('.runButton').val(state.run[1]);
       }
+
       $node.find('.resetButton').attr('disabled', !state.reset);
       $node.find('.hexdumpButton').attr('disabled', !state.hexdump);
       $node.find('.disassembleButton').attr('disabled', !state.disassemble);
@@ -130,6 +143,7 @@ function SimulatorWidget(node) {
       $node.find('.debug').attr('checked', state.debug[1]);
       $node.find('.stepButton').attr('disabled', !state.debug[1]);
       $node.find('.gotoButton').attr('disabled', !state.debug[1]);
+
       currentState = state;
     }
 
@@ -166,14 +180,14 @@ function SimulatorWidget(node) {
     }
 
     return {
-      initialize: initialize,
-      play: play,
-      stop: stop,
-      assembleSuccess: assembleSuccess,
-      debugOn: debugOn,
-      debugOff: debugOff,
-      toggleMonitor: toggleMonitor,
-      showNotes: showNotes
+      initialize      : initialize,
+      play            : play,
+      stop            : stop,
+      assembleSuccess : assembleSuccess,
+      debugOn         : debugOn,
+      debugOff        : debugOff,
+      toggleMonitor   : toggleMonitor,
+      showNotes       : showNotes
     };
   }
 
@@ -215,9 +229,9 @@ function SimulatorWidget(node) {
     }
 
     return {
-      initialize: initialize,
-      reset: reset,
-      updatePixel: updatePixel
+      initialize  : initialize,
+      reset       : reset,
+      updatePixel : updatePixel
     };
   }
 
@@ -239,15 +253,19 @@ function SimulatorWidget(node) {
     // storeByte() - Poke a byte, don't touch any registers
 
     function storeByte(addr, value) {
-      if (simulator.aw > simulator.dw)
+      if (simulator.aw > simulator.dw) {
         value &= simulator.dm;
+      }
+
       set(addr, value);
+
       if ((addr >= 0x200) && (addr <= 0x5ff)) {
         display.updatePixel(addr);
       }
     }
 
     // storeKeypress() - Store keycode in ZP $ff
+
     function storeKeypress(e) {
       value = e.which;
       memory.storeByte(0xff, value);
@@ -260,6 +278,7 @@ function SimulatorWidget(node) {
       for (var x = 0; x < length; x++) {
         if ((x & 15) === 0) {
           if (x > 0) { html += "\n"; }
+
           n = (start + x);
           html += addr2hex(n);
           html += ": ";
@@ -267,16 +286,17 @@ function SimulatorWidget(node) {
         html += num2hex(memory.get(start + x));
         html += " ";
       }
+
       return html;
     }
 
     return {
-      set: set,
-      get: get,
-      getWord: getWord,
-      storeByte: storeByte,
-      storeKeypress: storeKeypress,
-      format: format
+      set           : set,
+      get           : get,
+      getWord       : getWord,
+      storeByte     : storeByte,
+      storeKeypress : storeKeypress,
+      format        : format
     };
   }
 
@@ -293,6 +313,7 @@ function SimulatorWidget(node) {
     var executeId;
 
     // supporting various data bus sizes for 6502, 65Org16 and 65Org32
+
     var dw, aw, dm, am, ms;
 
     function updateDw(w){
@@ -313,7 +334,9 @@ function SimulatorWidget(node) {
       } else {
         regP |= 0x02;
       }
+
       var signbit = 2*(1<<(simulator.dw-2)) // same as 1<<(dw-1) even for dw==32
+
       if (value & signbit) {
         regP |= signbit;
       } else {
@@ -362,6 +385,7 @@ function SimulatorWidget(node) {
       }
 
       var vbit = signbit/2;
+
       if (value & vbit) {
         regP |= vbit;
       } else {
@@ -407,6 +431,7 @@ function SimulatorWidget(node) {
 
     function jumpBranch(offset) {
       regPC += offset;
+
       if (offset > simulator.dm/2) {
         regPC -= 1 + simulator.dm;
       }
@@ -438,6 +463,7 @@ function SimulatorWidget(node) {
       } else {
         CLC();
       }
+
       val = (reg - val);
       setNVflags(val);
     }
@@ -476,6 +502,7 @@ function SimulatorWidget(node) {
         w += tmp;
       } else {
         w = simulator.dm + regA - value + carrySet();
+
         if (w < 1+simulator.dm) {
           CLC();
           if (overflowSet() && w < signbit) { CLV(); }
@@ -501,6 +528,7 @@ function SimulatorWidget(node) {
 
       if (decimalMode()) {
         tmp = (regA & 0xf) + (value & 0xf) + carrySet();
+
         if (tmp >= 10) {
           tmp = 0x10 | ((tmp + 6) & 0xf);
         }
@@ -526,6 +554,7 @@ function SimulatorWidget(node) {
           if (overflowSet() && tmp < signbit) { CLV(); }
         }
       }
+
       regA = tmp & simulator.dm;
       setNVflagsForRegA();
     }
@@ -540,12 +569,14 @@ function SimulatorWidget(node) {
         var zp = (popByte() + regX) & simulator.dm;
         var addr = memory.getWord(zp);
         var value = memory.get(addr);
+
         regA |= value;
         ORA();
       },
 
       i05: function () {
         var zp = popByte();
+
         regA |= memory.get(zp);
         ORA();
       },
@@ -553,6 +584,7 @@ function SimulatorWidget(node) {
       i06: function () {
         var zp = popByte();
         var value = memory.get(zp);
+
         setCarryFlagFromBit7(value);
         value = 2 * (value & (simulator.dm/2)); // take care for 32bit case
         memory.storeByte(zp, value);
@@ -1745,10 +1777,10 @@ function SimulatorWidget(node) {
 
       var l=['Abs','AbsX','AbsY','AbsI', 'AbsXI', 'ZPRel']
 
-      for(var i in l){                              
-        if (simulator.aw > simulator.dw){          
-          assembler.instructionLength[l[i]] = 3;    
-        } else {                                    
+      for(var i in l){
+        if (simulator.aw > simulator.dw){
+          assembler.instructionLength[l[i]] = 3;
+        } else {
           assembler.instructionLength[l[i]] = 2;
         }
       }
@@ -1790,6 +1822,7 @@ function SimulatorWidget(node) {
       for (var i = 0; i < lines.length; i++) {
         if (!indexLine(lines[i])) {
           message("**Label already defined at line " + (i + 1) + ":** " + lines[i]);
+
           return false;
         }
       }
@@ -1902,12 +1935,12 @@ function SimulatorWidget(node) {
     }
 
     return {
-      indexLines    : indexLines,
-      find          : find,
-      getPC         : getPC,
-      set           : set,
-      displayMessage: displayMessage,
-      reset         : reset
+      indexLines      : indexLines,
+      find            : find,
+      getPC           : getPC,
+      set             : set,
+      displayMessage  : displayMessage,
+      reset           : reset
     };
   }
 
@@ -2015,7 +2048,7 @@ function SimulatorWidget(node) {
       ["RMB6", null, 0x67, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
       ["RMB7", null, 0x77, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
       // w65c02s Rockwell Set Memory Bit Instructions
-      ["SMB0", null, 0x87, null, null, null, null, null, null, null, null, null, null, null,  null,  null],   
+      ["SMB0", null, 0x87, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
       ["SMB1", null, 0x97, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
       ["SMB2", null, 0xa7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
       ["SMB3", null, 0xb7, null, null, null, null, null, null, null, null, null, null, null,  null,  null],
@@ -2032,7 +2065,7 @@ function SimulatorWidget(node) {
     // assembleCode()
     // "assembles" the code into memory
 
-    function assembleCode() {       
+    function assembleCode() {
       simulator.reset();
       labels.reset();
       defaultCodePC = 0x600;
@@ -2040,6 +2073,7 @@ function SimulatorWidget(node) {
 
       var code = $node.find('.code').val();
       code += "\n\n";
+
       var lines = code.split("\n");
       codeAssembledOK = true;
 
@@ -2075,8 +2109,10 @@ function SimulatorWidget(node) {
         memory.set(defaultCodePC, 0x00); //set a null byte at the end of the code
       } else {
         var str = lines[i].replace("<", "&lt;").replace(">", "&gt;");
+
         message("**Syntax error line " + (i + 1) + ": " + str + "**");
         ui.initialize();
+
         return;
       }
 
@@ -2101,11 +2137,11 @@ function SimulatorWidget(node) {
 
       // trim line; first from the start to first non-whitespace,
       //            and then from the end back to last non-whitespace
-      
+
       // match at the beginning of the line(^) whitespace(\s) any number times(+), and replace with ""
-      input = input.replace(/^\s+/, "");    
+      input = input.replace(/^\s+/, "");
       // match whitespace(\s) any number times(+) at the end of the line($), and replace with ""
-      input = input.replace(/\s+$/, "");    
+      input = input.replace(/\s+$/, "");
 
       // Find command or label
 
@@ -2177,7 +2213,7 @@ function SimulatorWidget(node) {
         if (Opcodes[o][0] === command) {
           // most specific patterns first to avoid false matches; detect zp before abs
           if (checkImp  (param, Opcodes[o][11])) { return true; }   // Implied
-//          if (checkZPRel(param, Opcodes[o][15])) { return true; }   // Zero Page Direct, Relative
+          if (checkZPRel(param, Opcodes[o][15])) { return true; }   // Zero Page Direct, Relative
           if (checkZPXI (param, Opcodes[o][ 9])) { return true; }   // Pre-indexed Zero Page Indirect
           if (checkZPIY (param, Opcodes[o][10])) { return true; }   // Post-indexed Zero Page Indirect
           if (checkZPI  (param, Opcodes[o][ 8])) { return true; }   // Zero Page Indirect
@@ -2249,7 +2285,7 @@ function SimulatorWidget(node) {
 
       // Accumulator instructions are counted as single-byte opcodes
 
-      if (param === "" || param === "A" || param === "a") { 
+      if (param === "" || param === "A" || param === "a") {
         pushByte(opcode);
 
         return true;
@@ -2257,6 +2293,49 @@ function SimulatorWidget(node) {
 
         return false;
       }
+    }
+
+    // checkZPRel() - Check if param is zp,rel and push values
+
+    function checkZPRel(param, opcode) {
+      var zp, addr, distance, zpParam;
+
+      if (opcode === null) { return false; }
+
+      if (param.match(/^.+,.+$/i)) {
+        zpParam = param.replace(/^(.+),.+$/i, "$1");
+        param   = param.replace(/^.+,(.+)$/i, "$1");
+
+        zp = evaluate(zpParam);
+        if (zp < 0 || zp > simulator.dm) { return false; }
+
+        if (param.match(/\w+/)) {
+          addr = labels.getPC(param);
+        } else {
+          pushByte(opcode);
+          pushByte(zp);
+          pushByte(0x00);  // dummy argument to ensure first pass computes correct labels
+
+          return false;
+        }
+
+        distance = addr - defaultCodePC - 3;
+        if (distance < -simulator.dm/2-1 || distance > simulator.dm/2) {
+          pushByte(opcode);
+          pushByte(zp);
+          pushByte(0x00);  // dummy argument to ensure first pass computes correct labels
+
+          return false;
+        }
+
+        pushByte(opcode);
+        pushByte(zp);
+        pushByte((distance + simulator.dm+1) & simulator.dm);
+
+        return true;
+      }
+
+      return false;
     }
 
     // checkZPXI() - Check if param is (zp,x) and push value
@@ -2710,7 +2789,7 @@ function SimulatorWidget(node) {
       var mode;
 
       function isAccumulatorInstruction() {
-                             //  asl   inc   rol   dec   lsr   ror 
+                             //  asl   inc   rol   dec   lsr   ror
         var accumulatorBytes = [0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x6a];
 
         if (accumulatorBytes.indexOf(bytes[0]) > -1) {
@@ -2719,7 +2798,7 @@ function SimulatorWidget(node) {
       }
 
       function isBranchInstruction() {
-        return opCode.match(/^B/) && !(opCode == 'BIT' || opCode == 'BRK');
+        return opCode.match(/^[B]+/i) && !(opCode === 'BIT' || opCode === 'BRK');
       }
 
       //This is gnarly, but unavoidably so?
@@ -2728,32 +2807,48 @@ function SimulatorWidget(node) {
         var argsString = args.map(num2hex).reverse().join('');
 
         if (isBranchInstruction()) {
-          var destination = address + 2;
+          if (!opCode.match(/^BB.+/i)) {
+            // Branch Instructions: BCC, BCS, BNE, BEQ, BVC, BVS, BPL, BMI, BRA
+            var destination = address + 2;
 
-          destination += args[0];
+            destination += args[0];
 
-          if (args[0] > simulator.dm/2) {
-            destination -= simulator.dm + 1;
+            if (args[0] > simulator.dm/2) {
+              destination -= simulator.dm + 1;
+            }
+
+            argsString = addr2hex(destination);
+          } else {
+            // Rockwell Branch if Bit Instructions: BBRx zp,rel; BBSx zp,rel
+            var destination = address + 3;
+
+            destination += args[1];
+
+            if (args[1] > simulator.dm/2) {
+              destination -= simulator.dm + 1;
+            }
+
+            argsString = num2hex(args[0]);
+            argsString = argsString + ',$' + addr2hex(destination);
           }
-          argsString = addr2hex(destination);
         }
 
         if (argsString) {
           argsString = '$' + argsString;
         }
-        
+
         if (mode === 'Imm') {
           argsString = '#' + argsString;
         }
-        
+
         if (mode.match(/^[a,z].+x/i)) {
           argsString += ',X';
         }
-        
+
         if (mode.match(/^[a,z].+i/i)) {
           argsString = '(' + argsString + ')';
         }
-        
+
         if (mode.match(/^[a,z].+y/i)) {
           argsString += ',Y';
         }
@@ -2872,4 +2967,3 @@ $(document).ready(function () {
     SimulatorWidget(this);
   });
 });
-
